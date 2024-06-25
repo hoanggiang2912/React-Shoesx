@@ -1,0 +1,13 @@
+.heroText {
+  font-size: 130px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.subText {
+  position: absolute;
+}
+
+@media screen and (max-width: 1079px) {}
+
+@media screen and (max-width: 778px) {}
