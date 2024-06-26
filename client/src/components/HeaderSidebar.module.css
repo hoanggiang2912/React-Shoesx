@@ -1,0 +1,9 @@
+.sidebarBox {
+  width: 400px;
+}
+
+@media screen and (max-width: 768px) {
+  .sidebarBox {
+    width: 100%;
+  }
+}

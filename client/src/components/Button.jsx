@@ -1,9 +1,13 @@
 import styles from "./Button.module.css";
 
-function Button({ children, className }) {
+function Button({ children, className, onClick, disabled, size }) {
   return (
     <button
-      className={`btn p-3 bg-primaryColor rounded-full text-white flex justify-center items-center hover:bg-gray-800 ease-in duration-200 transition ${className}`}
+      disabled={disabled}
+      onClick={onClick}
+      className={`btn ${
+        !size && "p-3"
+      } bg-black rounded-full text-white flex justify-center items-center ease-in duration-200 transition ${className}`}
     >
       {children}
     </button>

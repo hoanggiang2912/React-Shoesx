@@ -1,13 +1,22 @@
 .heroText {
-  font-size: 130px;
+  font-size: 144px;
   font-weight: bold;
   text-transform: uppercase;
+  font-family: 'fs-bf-beausans-pro';
 }
 
 .subText {
   position: absolute;
 }
 
-@media screen and (max-width: 1079px) {}
+@media screen and (max-width: 1080px) {
+  .heroText {
+    font-size: 108px;
+  }
+}
 
-@media screen and (max-width: 778px) {}
+@media screen and (max-width: 768px) {
+  .heroText {
+    font-size: 72px;
+  }
+}

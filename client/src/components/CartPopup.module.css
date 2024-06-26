@@ -1,0 +1,9 @@
+.cartBox {
+  width: 430px !important;
+}
+
+@media screen and (max-width: 768px) {
+  .cartBox {
+    width: 100%;
+  }
+}

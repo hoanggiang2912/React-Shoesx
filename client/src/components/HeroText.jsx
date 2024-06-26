@@ -7,7 +7,7 @@ function HeroText() {
         stylish shoes <br /> for you
       </h1>
       <p
-        className={`${styles.subText} bottom-3 right-0 absolute leading-normal max-w-xs`}
+        className={`${styles.subText} text-gray-700 bottom-3 right-0 absolute leading-normal max-w-xs`}
       >
         The sneakers are friendly to more people, espesiatly when you want to
         100k taller, because many sneakeers have inner heightening shoe poads,
