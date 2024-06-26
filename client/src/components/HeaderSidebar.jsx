@@ -5,7 +5,7 @@ import { FaMagnifyingGlass, FaXmark } from "react-icons/fa6";
 import { NavLink } from "react-router-dom";
 import Button from "./Button";
 
-function HeaderSidebar() {
+function HeaderSidebar({ openSearchBox }) {
   const { isOpenSidebar, dispatch } = useCart();
 
   return (
@@ -34,7 +34,10 @@ function HeaderSidebar() {
           </Button>
         </div>
         <div className="sidebarContent flex flex-col items-center p-5 flex-1 overflow-y-auto">
-          <Button className="!w-fit hover:bg-gray-700 mb-10 gap-2">
+          <Button
+            className="!w-fit hover:bg-gray-700 mb-10 gap-2"
+            onClick={openSearchBox}
+          >
             <FaMagnifyingGlass /> Find your shoes
           </Button>
           <NavLink className="hover:text-gray-900 text-4xl underline tac mb-10 flex items-center justify-center">

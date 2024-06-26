@@ -19,8 +19,18 @@ function Header() {
   const { dispatch } = useCart();
   const [isOpenSearchBox, setIsOpenSearchBox] = useState(false);
 
+  const openSearchBox = () => {
+    setIsOpenSearchBox(true);
+  };
+
   return (
     <>
+      <CartPopup />
+      <HeaderSidebar openSearchBox={openSearchBox} />
+      <SearchBox
+        isOpenSearchBox={isOpenSearchBox}
+        setIsOpenSearchBox={setIsOpenSearchBox}
+      />
       <header className="bg-gray-900 px-48 py-2">
         <div className="flex items-center justify-between w-full">
           <div className="flex gap-2 items-center">
@@ -32,16 +42,16 @@ function Header() {
               <FaPhone />: 0938 000 000
             </address>
           </div>
-          <Button className="!w-fit !bg-white !text-black hover:bg-gray-700 gap-2">
+          <Button
+            className="!w-fit !bg-white !text-black hover:bg-gray-700 gap-2"
+            onClick={openSearchBox}
+          >
             <FaMagnifyingGlass /> Find your shoes
           </Button>
         </div>
       </header>
       <header className="text-gray-600 body-font">
-        <CartPopup />
-        <HeaderSidebar />
-        <SearchBox />
-        <div className="container mx-auto flex flex-wrap py-5 flex-col md:flex-row items-center lg:px-48 md:px-20">
+        <div className="mx-auto flex flex-wrap py-5 flex-col md:flex-row items-center lg:px-48 md:px-20">
           <Button
             className="mr-5 !hover:bg-opacity-700"
             onClick={() => dispatch({ type: "openSidebar" })}

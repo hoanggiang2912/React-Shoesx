@@ -1,0 +1,7 @@
+.heroProductContainer {
+  min-height: 600px;
+}
+
+.productActive {
+  flex-basis: 40% !important;
+}

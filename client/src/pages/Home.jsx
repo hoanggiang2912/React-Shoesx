@@ -1,12 +1,14 @@
-import HeroText from "../components/HeroText";
+import Hero from "../components/Hero";
 import NormalUserLayout from "../components/NormalUserLayout";
+import ProductSection from "../components/ProductSection";
+import WhyChooseUs from "../components/WhyChooseUs";
 
 function Home() {
   return (
     <NormalUserLayout>
-      <section className="px-48 py-20">
-        <HeroText />
-      </section>
+      <Hero />
+      <WhyChooseUs />
+      <ProductSection title="new arrivals" />
     </NormalUserLayout>
   );
 }

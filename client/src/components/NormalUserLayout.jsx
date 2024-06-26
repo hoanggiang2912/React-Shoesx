@@ -4,7 +4,7 @@ import styles from "./NormalUserLayout.module.css";
 
 function NormalUserLayout({ children }) {
   return (
-    <div className="container">
+    <div className="app">
       <Header />
       {children}
       <Footer />
