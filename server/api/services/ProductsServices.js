@@ -491,7 +491,7 @@ exports.getAllByMultiParent = async (parents, limit = 10) => {
     );
 
     return {
-      products: formatData(products),
+      products,
     };
   } catch (error) {
     console.log("Error while getting products by multiple categories!");
@@ -522,6 +522,28 @@ exports.getByIdCategory = async ({ parent, children }) => {
     };
   } catch (error) {
     console.log("Error while getting products by category!");
+  }
+};
+
+exports.getByMultiCategoryId = async (idsCategory) => {
+  try {
+    const results = await Promise.all(
+      idsCategory.map((id) => {
+        return ProductsModel.find({
+          $or: [{ "idCategory.children": id }, { "idCategory.parent": id }],
+        });
+      })
+    );
+
+    // Flatten the array of arrays to get all matched products
+    const products = results.flat();
+    console.log(products); // Now products contains all matched products
+    return products; // Assuming you want to return the products
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return {
+      message: error.message,
+    };
   }
 };
 

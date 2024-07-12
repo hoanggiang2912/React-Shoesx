@@ -18,19 +18,19 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/category/:idCategory", async (req, res, next) => {
+router.get("/multi-category", async (req, res, next) => {
   try {
-    const id = req.params.idCategory;
-    const category = await CategoiesController.getOne(id);
-    res.json(category);
-  } catch (error) {
-    res.json({ message: error.message });
-  }
+    const categories = req.query.ids;
+    return {
+      message: categories,
+    };
+  } catch (error) {}
 });
 
 router.get("/parent", async (req, res, next) => {
   try {
-    const categories = await CategoiesController.getParentCategories();
+    const limit = req.query.limit;
+    const categories = await CategoiesController.getParentCategories(limit);
     res.json(categories);
   } catch (error) {
     res.json({ message: error.message });

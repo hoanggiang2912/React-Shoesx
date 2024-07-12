@@ -5,7 +5,7 @@ exports.getAll = async (query) => {
   return categories;
 };
 
-exports.getParentCategories = async () => {
+exports.getParentCategories = async (limit) => {
   const categories = CategoriesServices.getParentCategories();
   return categories;
 };

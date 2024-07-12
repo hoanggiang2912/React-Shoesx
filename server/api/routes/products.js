@@ -31,6 +31,17 @@ router.get("/multi-category", async (req, res) => {
   }
 });
 
+router.get("/categories", async (req, res, next) => {
+  try {
+    const idsCategory = req.query.idsCategory.split(",");
+    const products = await ProductsController.getByMultiCategoryId(idsCategory);
+    console.log(products);
+    res.json(products);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 // get a specific product
 router.get("/:id", async (req, res, next) => {
   try {

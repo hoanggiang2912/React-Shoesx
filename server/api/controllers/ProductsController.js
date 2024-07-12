@@ -29,8 +29,14 @@ exports.getProductsByViews = async (limit) => {
   const products = await ProductServices.getProductsByViews(limit);
   return products;
 };
+
 exports.getProductsByName = async (name) => {
   const products = await ProductServices.getProductsByName(name);
+  return products;
+};
+
+exports.getByMultiCategoryId = async (ids) => {
+  const products = await ProductServices.getByMultiCategoryId(ids);
   return products;
 };
 

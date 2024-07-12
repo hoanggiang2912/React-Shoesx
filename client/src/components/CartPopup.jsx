@@ -4,9 +4,12 @@ import { FaXmark } from "react-icons/fa6";
 import Button from "./Button";
 import styles from "./CartPopup.module.css";
 import CartProductPopup from "./CartProductPopup";
+import { formatCurrency } from "../utils/util";
+import useKey from "../hooks/useKey";
 
 function CartPopup() {
-  const { isOpenCart, dispatch } = useCart();
+  const { isOpenCart, dispatch, cart, cartTotal, cartQty } = useCart();
+  useKey("Escape", () => dispatch({ type: "closeCart" }));
 
   return (
     <motion.div
@@ -37,21 +40,30 @@ function CartPopup() {
             <FaXmark />
           </Button>
         </div>
-        <div className="cart-product-wrapper flex flex-col p-5 flex-1 overflow-y-auto">
-          <CartProductPopup />
-          <CartProductPopup />
-          <CartProductPopup />
-          <CartProductPopup />
-          <CartProductPopup />
-          <CartProductPopup />
-        </div>
+        {cart && cart.length > 0 ? (
+          <div className="cart-product-wrapper flex flex-col p-5 flex-1 overflow-y-auto">
+            {cart.map((product) => (
+              <CartProductPopup key={product._id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <>
+            <h2 className="text-lg text-gray-900 font-semibold p-5 flex-1 mx-auto">
+              Your cart is empty!
+            </h2>
+          </>
+        )}
         <div className="cartFooter border-t border-gray-100">
           <div className="flex justify-between p-5">
             <div className="flex items-center gap-1">
               <h3 className="text-lg text-gray-900 font-semibold">Total</h3>
-              <span className="text-sm font-regular">(4 items)</span>
+              <span className="text-sm font-regular">
+                ({cartQty} {cartQty > 1 ? "items" : "item"})
+              </span>
             </div>
-            <h3 className="text-lg text-gray-900 font-semibold">2.299.000d</h3>
+            <h3 className="text-lg text-gray-900 font-semibold">
+              {formatCurrency(cartTotal)}
+            </h3>
           </div>
           <div className="px-5 pb-5">
             <Button className="w-full p-3 bg-primaryColor text-white">

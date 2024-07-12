@@ -1,8 +1,8 @@
 import Footer from "./Footer";
 import Header from "./Header";
-import styles from "./NormalUserLayout.module.css";
+import styles from "./ClientLayout.module.css";
 
-function NormalUserLayout({ children }) {
+function ClientLayout({ children }) {
   return (
     <div className="app">
       <Header />
@@ -12,4 +12,4 @@ function NormalUserLayout({ children }) {
   );
 }
 
-export default NormalUserLayout;
+export default ClientLayout;

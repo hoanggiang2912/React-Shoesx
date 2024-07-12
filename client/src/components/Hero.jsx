@@ -3,7 +3,7 @@ import HeroText from "./HeroText";
 
 function Hero() {
   return (
-    <section className="px-48 py-20">
+    <section className="px-48 py-8">
       <HeroText />
       <HeroProducts />
     </section>

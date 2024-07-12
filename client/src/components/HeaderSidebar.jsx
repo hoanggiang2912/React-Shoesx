@@ -40,16 +40,28 @@ function HeaderSidebar({ openSearchBox }) {
           >
             <FaMagnifyingGlass /> Find your shoes
           </Button>
-          <NavLink className="hover:text-gray-900 text-4xl underline tac mb-10 flex items-center justify-center">
+          <NavLink
+            to={"/"}
+            className="hover:text-gray-900 text-4xl underline tac mb-10 flex items-center justify-center"
+          >
             Home
           </NavLink>
-          <NavLink className="hover:text-gray-900 text-4xl underline tac mb-10 flex items-center justify-center">
+          <NavLink
+            to={"/shop"}
+            className="hover:text-gray-900 text-4xl underline tac mb-10 flex items-center justify-center"
+          >
             Shop
           </NavLink>
-          <NavLink className="hover:text-gray-900 text-4xl underline tac mb-10 flex items-center justify-center">
+          <NavLink
+            to={"/contact"}
+            className="hover:text-gray-900 text-4xl underline tac mb-10 flex items-center justify-center"
+          >
             Contact
           </NavLink>
-          <NavLink className="hover:text-gray-900 text-4xl underline tac mb-10 flex items-center justify-center">
+          <NavLink
+            to={"/about-us"}
+            className="hover:text-gray-900 text-4xl underline tac mb-10 flex items-center justify-center"
+          >
             About us
           </NavLink>
           <NavLink className="hover:text-gray-900 text-4xl underline tac mb-10 flex items-center justify-center">

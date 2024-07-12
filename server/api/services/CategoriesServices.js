@@ -42,12 +42,24 @@ exports.getAll = async (query) => {
   }
 };
 
-exports.getParentCategories = async () => {
+exports.getParentCategories = async (limit = 10) => {
   const categories = await CategoriesModel.find({
     children: { $ne: [] },
   });
 
-  return categories;
+  const categoriesWithProducts = await Promise.all(
+    categories.map(async (category) => {
+      const products = await ProductsModel.find({
+        "idCategory.parent": category.categoryId,
+      }).limit(limit);
+      return {
+        ...category._doc,
+        products,
+      };
+    })
+  );
+
+  return { categories: categoriesWithProducts };
 };
 
 exports.getCategoriesWithProducts = async (query) => {
@@ -97,7 +109,7 @@ exports.getGenderCategories = async () => {
 };
 
 exports.getOne = async (id) => {
-  let category = await CategoriesModel.findById(id);
+  let category = await CategoriesModel.findOne({ categoryId: id });
 
   const products = await ProductsModel.find({
     "idCategory.parent": category.categoryId,

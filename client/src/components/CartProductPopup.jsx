@@ -1,11 +1,18 @@
 import { FaTrashCan } from "react-icons/fa6";
 import Button from "./Button";
+import { formatCurrency } from "../utils/util";
+import { useCart } from "../contexts/CartContext";
 
-function CartProductPopup() {
+function CartProductPopup({ product, removeable = true }) {
+  const { dispatch } = useCart();
+
+  const { _id, title, background, idCategory, price, salePrice, qty } = product;
+  // console.log(qty);
+
   return (
     <div className="cartItem flex items-start pb-5 gap-2">
       <img
-        src="https://images.unsplash.com/photo-1719150006655-62fdcadf01a7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxMXx8fGVufDB8fHx8fA%3D%3D"
+        src={background}
         alt=""
         width="80"
         height="80"
@@ -17,20 +24,37 @@ function CartProductPopup() {
       />
       <div className="flex flex-1 flex-col flex-between h-full">
         <div className="flex flex-col">
-          <h4 className="text-md font-medium text-gray">
-            Coffee Ambasador doloreto
-          </h4>
+          <h4 className="text-md capitalize font-medium text-gray">{title}</h4>
           <div className="flex-1 mt-2">
-            <p className="text-md text-slate-400">Ambasador</p>
+            <p className="text-md capitalize text-slate-400">
+              {idCategory?.children}
+            </p>
           </div>
         </div>
         <div className="flex gap-2 mt-2">
-          <span className="text-md">2.299.000d</span>
-          <span className="text-md">x2</span>
+          {salePrice ? (
+            <>
+              <span className="text-md">
+                {formatCurrency(price - (salePrice * price) / 100)}
+              </span>
+              <del className="text-md text-slate-500">
+                <i>{formatCurrency(price)}</i>
+              </del>
+            </>
+          ) : (
+            ""
+          )}{" "}
+          {!salePrice && (
+            <span className="text-md">{formatCurrency(price)}</span>
+          )}
+          <span className="text-md">x{qty}</span>
         </div>
       </div>
-      <div className="flex-col flex">
-        <Button className="text-slate-500 bg-opacity-0 hover:text-red-400 hover:bg-gray-100">
+      <div className={`flex-col ${!removeable ? "hidden" : ""}`}>
+        <Button
+          onClick={() => dispatch({ type: "removeFromCart", payload: _id })}
+          className="!text-slate-800 bg-opacity-0 hover:text-red-400 hover:bg-gray-100"
+        >
           <FaTrashCan />
         </Button>
       </div>
