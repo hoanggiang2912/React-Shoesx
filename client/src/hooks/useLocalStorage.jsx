@@ -1,5 +1,15 @@
 import { useState } from "react";
 
+/**
+ * Hook to manage local storage
+ * @param {string} key - Key to store in local storage
+ * @param {any} initialValue - Initial value to store
+ * @returns {Array} - Array containing the stored value and a function to set the value
+ * @example
+ * const [value, setValue] = useLocalStorage
+ * @see https://usehooks.com/useLocalStorage/
+ */
+
 export default function useLocalStorage(key, initialValue) {
   const [storedValue, setStoredValue] = useState(() => {
     if (typeof window === "undefined") {

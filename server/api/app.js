@@ -157,7 +157,7 @@ app.use("/api/v1/categories", categoriesRouter);
 app.use("/api/v1/products", productsRouter);
 app.use("/api/v1/auth", usersRouter);
 app.use("/api/v1/bills", billsRouter);
-app.use("/forgot-password", forgotPasswordRouter);
+app.use("/api/v1/auth/forgot-password", forgotPasswordRouter);
 
 const connection = mongoose
   .connect("mongodb://localhost:27017/Shoesx")

@@ -1,9 +1,25 @@
+import { FaC } from "react-icons/fa6";
 import { AiOutlineUserAdd } from "react-icons/ai";
-import { motion } from "framer-motion";
-import { Link, useParams } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import Overlay from "./Overlay";
+import { FormProvider, useForm } from "react-hook-form";
+import Input from "./Input";
+import {
+  emailValidation,
+  nameValidation,
+  passwordValidation,
+  phoneValidation,
+} from "../utils/inputValidations";
+import { useAuth } from "../contexts/AuthContext";
+import FormMessage from "./FormMessage";
 
 function RegisterForm({ isOpen, close, switcher }) {
+  const methods = useForm();
+  const { isLoading, register, message, isError } = useAuth();
+
+  const onSubmit = methods.handleSubmit((data) => register(data));
+
   return (
     <Overlay isOpen={isOpen} close={close}>
       <motion.div
@@ -21,58 +37,86 @@ function RegisterForm({ isOpen, close, switcher }) {
             alt=""
             className={"absolute z-8 transform scale-125"}
           />
-          <form
-            action="#"
-            id="RegisterForm"
-            className="relative z-10 bg-white backdrop-blur-md bg-opacity-10 p-5 rounded-xl shadow-xl flex-1"
-          >
-            <h2 className="text-2xl font-bold text-white">Register</h2>
-            <p className="text-white mt-2">
-              Already have an account?{" "}
-              <a
-                href="#"
-                onClick={switcher}
-                className="text-white underline hover:text-gray-300 transition"
-              >
-                Login
-              </a>
-            </p>
-            <div className="mt-4">
-              <input
-                type="text"
-                id="fullname"
-                placeholder="Full name"
-                className="form-input"
-              />
-            </div>
-            <div className="mt-4">
-              <input
-                type="email"
-                id="email"
-                placeholder="Email"
-                className="form-input"
-              />
-            </div>
-            <div className="mt-4">
-              <input
-                type="password"
-                placeholder="Password"
-                id="password"
-                className="form-input"
-              />
-            </div>
-            <div className="mt-4">
-              <span className="text-md text-center text-gray-300">
-                Forgot your password? <Link>Click here</Link>.
-              </span>
-            </div>
-            <div className="mt-4">
-              <button className="bg-black text-white w-full py-2 rounded-full gap-2 flex items-center justify-center hover:backdrop-blur-xl hover:bg-opacity-80 transition">
-                <AiOutlineUserAdd />
-                Register
-              </button>
-            </div>
-          </form>
+          <FormProvider {...methods}>
+            <form
+              action="#"
+              id="RegisterForm"
+              className="relative z-10 bg-white backdrop-blur-md bg-opacity-10 p-5 rounded-xl shadow-xl flex-1"
+              onSubmit={(e) => e.preventDefault()}
+            >
+              {message && (
+                <AnimatePresence mode="wait" initial={false}>
+                  {message && (
+                    <FormMessage message={message} isError={isError} />
+                  )}
+                </AnimatePresence>
+              )}
+              <h2 className="text-2xl font-bold text-white">Register</h2>
+              <p className="text-white mt-2">
+                Already have an account?{" "}
+                <a
+                  href="#"
+                  onClick={switcher}
+                  className="text-white underline hover:text-gray-300 transition"
+                >
+                  Login
+                </a>
+              </p>
+              <div className="mt-4">
+                <Input
+                  labelClassName={"text-lg font-semibold "}
+                  inputClassName={"form-input"}
+                  {...nameValidation}
+                />
+              </div>
+              <div className="mt-4">
+                <Input
+                  labelClassName={"text-lg font-semibold "}
+                  inputClassName={"form-input"}
+                  {...emailValidation}
+                />
+              </div>
+              <div className="mt-4">
+                <Input
+                  labelClassName={"text-lg font-semibold "}
+                  inputClassName={"form-input"}
+                  {...phoneValidation}
+                />
+              </div>
+              <div className="mt-4">
+                <Input
+                  labelClassName={"text-lg font-semibold "}
+                  inputClassName={"form-input"}
+                  togglePassword={true}
+                  buttonClassname={"text-white"}
+                  {...passwordValidation}
+                />
+              </div>
+              <div className="mt-4">
+                <span className="text-md text-center text-gray-300">
+                  Forgot your password? <Link>Click here</Link>.
+                </span>
+              </div>
+              <div className="mt-4">
+                <button
+                  className="bg-black text-white w-full py-2 rounded-full gap-2 flex items-center justify-center hover:backdrop-blur-xl hover:bg-opacity-80 transition"
+                  onClick={onSubmit}
+                >
+                  {!isLoading ? (
+                    <>
+                      <AiOutlineUserAdd />
+                      <p>Register</p>
+                    </>
+                  ) : (
+                    <>
+                      <FaC />
+                      <p>Waiting for register</p>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </FormProvider>
         </div>
         <div className="relative w-1/2">
           <img
@@ -97,7 +141,8 @@ function RegisterForm({ isOpen, close, switcher }) {
               Hi there!
             </h1>
             <p className="mt-2">
-              Join us today and get the best experience of shopping online.
+              Join us today <br /> and get the best experience <br /> of
+              shopping online.
             </p>
           </div>
         </div>

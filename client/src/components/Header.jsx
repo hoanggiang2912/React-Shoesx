@@ -1,7 +1,9 @@
+import { AiOutlineLogout } from "react-icons/ai";
+import { BsFillPersonFill, BsGridFill } from "react-icons/bs";
 import { FaUserPlus } from "react-icons/fa6";
 import { AiOutlineLogin } from "react-icons/ai";
 import { GoMail } from "react-icons/go";
-import { NavLink } from "react-router-dom";
+import { NavLink, useSearchParams } from "react-router-dom";
 import Button from "./Button";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import {
@@ -12,9 +14,10 @@ import {
 } from "react-icons/fa6";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { FaCartShopping } from "react-icons/fa6";
-import React, { Suspense, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useCart } from "../contexts/CartContext";
 import Loader from "./Loader";
+import useAuth from "../contexts/AuthContext";
 
 const LazyLoginForm = React.lazy(() => import("./LoginForm"));
 const LazyRegisterForm = React.lazy(() => import("./RegisterForm"));
@@ -28,6 +31,18 @@ function Header() {
   const [isOpenUserDropdown, setIsOpenUserDropdown] = useState(false);
   const [isOpenRegisterForm, setIsOpenRegisterForm] = useState(false);
   const [isOpenLoginForm, setIsOpenLoginForm] = useState(false);
+
+  const [params, setParams] = useSearchParams();
+  const logedin = params.get("logedin");
+  const redirect = params.get("redirect");
+
+  const { isAuthenticated, logout } = useAuth();
+
+  useEffect(() => {
+    if (logedin && redirect) {
+      setIsOpenLoginForm(true);
+    }
+  }, [logedin, redirect]);
 
   const formSwitcher = () => {
     setIsOpenLoginForm(!isOpenLoginForm);
@@ -152,21 +167,52 @@ function Header() {
                     : "bg-opacity-0 invisible"
                 }`}
               >
-                <div className="dropdown-content flex flex-col">
-                  <NavLink
-                    onClick={openLoginForm}
-                    className="dropdown-item p-2 hover:bg-slate-950 rounded-md transition-all flex items-center justify-center gap-2"
-                  >
-                    <AiOutlineLogin />
-                    Login
-                  </NavLink>
-                  <NavLink
-                    onClick={openRegisterForm}
-                    className="dropdown-item p-2 hover:bg-slate-950 rounded-md transition-all flex items-center gap-2 justify-center"
-                  >
-                    <FaUserPlus /> Register
-                  </NavLink>
-                </div>
+                {!isAuthenticated ? (
+                  <div className="dropdown-content flex flex-col">
+                    <NavLink
+                      onClick={openLoginForm}
+                      className="dropdown-item p-2 hover:bg-slate-950 rounded-md transition-all flex items-center gap-2"
+                    >
+                      <AiOutlineLogin />
+                      Login
+                    </NavLink>
+                    <NavLink
+                      onClick={openRegisterForm}
+                      className="dropdown-item p-2 hover:bg-slate-950 rounded-md transition-all flex items-center gap-2"
+                    >
+                      <FaUserPlus /> Register
+                    </NavLink>
+                  </div>
+                ) : (
+                  <div className="dropdown-content flex flex-col">
+                    <NavLink
+                      to={"/user/general"}
+                      className="dropdown-item p-2 hover:bg-slate-950 rounded-md transition-all flex items-center gap-2"
+                    >
+                      <BsFillPersonFill /> My Account
+                    </NavLink>
+                    <NavLink
+                      to={"/user/orders"}
+                      className="dropdown-item p-2 hover:bg-slate-950 rounded-md transition-all flex items-center gap-2"
+                    >
+                      <BsGridFill /> Orders History
+                    </NavLink>
+                    <NavLink
+                      to={"/cart"}
+                      className="dropdown-item p-2 hover:bg-slate-950 rounded-md transition-all flex items-center gap-2"
+                    >
+                      <FaCartShopping />
+                      Cart
+                    </NavLink>
+                    <button
+                      className="dropdown-item p-2 hover:bg-slate-950 rounded-md transition-all flex items-center gap-2 text-red-500"
+                      onClick={logout}
+                    >
+                      <AiOutlineLogout />
+                      Logout
+                    </button>
+                  </div>
+                )}
               </div>
             </Button>
             <Button

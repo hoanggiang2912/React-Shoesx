@@ -46,6 +46,18 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  resetToken: {
+    type: String,
+    default: "",
+  },
+  accessToken: {
+    type: String,
+    default: "",
+  },
+  tokenExpiry: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model("users", userSchema);

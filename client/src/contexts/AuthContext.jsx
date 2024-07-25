@@ -1,71 +1,211 @@
-import {
-  RouterProvider,
-  createBrowserRouter,
-  useNavigate,
-} from "react-router-dom";
 import axios from "axios";
-import {
-  useEffect,
-  useRef,
-  useState,
-  createContext,
-  useContext,
-  useCallback,
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-// Ensures cookie is sent
-axios.defaults.withCredentials = true;
-const serverUrl = import.meta.env.REACT_APP_SERVER_URL;
+// Create the AuthContext
+export const AuthContext = createContext();
 
-const AuthContext = createContext();
+// Create the AuthProvider component
+export const AuthProvider = ({ children }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setError] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem("isAuthenticated") || false
+  );
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("user")) || {}
+  );
 
-const AuthContextProvider = ({ children }) => {
-  const [loggedIn, setLoggedIn] = useState(null);
-  const [user, setUser] = useState(null);
+  const api = "http://localhost:3000/api/v1/auth";
 
-  const checkLoginState = useCallback(async () => {
+  const login = async (data, close) => {
+    // Perform login logic here
+    // console.log("data: ", data);
+    // console.log("api: ", api);
     try {
-      const {
-        data: { loggedIn: logged_in, user },
-      } = await axios.get(`${serverUrl}/auth/logged_in`);
-      setLoggedIn(logged_in);
-      user && setUser(user);
-    } catch (err) {
-      console.error(err);
-    }
-  }, []);
+      setIsLoading(true);
+      const response = await axios.post(`${api}/login`, data);
+      if (response.status === 200) {
+        localStorage.setItem("isAuthenticated", true);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
 
-  useEffect(() => {
-    checkLoginState();
-  }, [checkLoginState]);
+        setMessage("Logged in successfully");
+        setIsAuthenticated(true);
+        setUser(response.data.user);
+      } else {
+        setMessage("Invalid credentials");
+        setError(true);
+      }
+    } catch (error) {
+      console.error(error);
+      setMessage(error.response?.data?.message || "An error occurred");
+      setError(true);
+    } finally {
+      setIsLoading(false);
+      setTimeout(() => {
+        setMessage("");
+        setError(false);
+      }, 3000);
+      setTimeout(() => {
+        close();
+      }, 2000);
+    }
+  };
+
+  const logout = () => {
+    // Perform logout logic here
+    localStorage.removeItem("token");
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("user");
+    setUser({});
+
+    setIsAuthenticated(false);
+  };
+
+  const register = async (data) => {
+    // Perform logout logic here
+    // console.log("data: ", data);
+    // console.log("api: ", api);
+
+    try {
+      setIsLoading(true);
+      const response = await axios.post(`${api}/register`, data);
+      // console.log("response: ", response);
+      if (response.status === 200) {
+        setMessage("User registered successfully");
+      }
+    } catch (error) {
+      // console.error(error);
+      setMessage(error.response.data.message);
+      setError(true);
+    } finally {
+      setIsLoading(false);
+      setTimeout(() => {
+        setMessage("");
+        setError(false);
+      }, 5000);
+    }
+  };
+
+  const updateProfile = async (id, data) => {
+    // console.log("data: ", data);
+    // console.log("api: ", api);
+
+    try {
+      setIsLoading(true);
+      const response = await axios.patch(`${api}/update-profile/${id}`, data);
+      console.log("response: ", response);
+
+      if (response.status === 200) {
+        setMessage("User updated successfully");
+        const updatedUser = response.data.updatedUser;
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setUser(updatedUser);
+      }
+    } catch (error) {
+      // console.error(error);
+      setMessage(error.response.data.message);
+      setError(true);
+    } finally {
+      setIsLoading(false);
+      setTimeout(() => {
+        setMessage("");
+        setError(false);
+      }, 5000);
+    }
+  };
+
+  const forgotPassword = async (data) => {
+    try {
+      setIsLoading(true);
+
+      const response = await axios.post(`${api}/forgot-password`, {
+        email: data.email,
+        id: data.id,
+      });
+
+      // console.log("response: ", response);
+
+      if (response.data.sendMail) {
+        setMessage("Email sent successfully");
+      }
+    } catch (error) {
+      setError(true);
+      setMessage(error.response.data.errorMessage);
+    } finally {
+      setIsLoading(false);
+      setTimeout(() => {
+        setMessage("");
+        setError(false);
+      }, 5000);
+    }
+  };
+
+  const updatePassword = async (data) => {
+    try {
+      setIsLoading(true);
+      const response = await axios.patch(`${api}/update-password/${data.id}`, {
+        password: data.password,
+      });
+
+      // console.log("response: ", response);
+
+      if (response.data.success) {
+        setMessage("Password updated successfully");
+      }
+    } catch (error) {
+      setError(true);
+      setMessage(error.response.data.errorMessage);
+    } finally {
+      setIsLoading(false);
+      setTimeout(() => {
+        setMessage("");
+        setError(false);
+      }, 5000);
+    }
+  };
 
   return (
-    <AuthContext.Provider value={{ loggedIn, checkLoginState, user }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        user,
+        login,
+        logout,
+        register,
+        updateProfile,
+        forgotPassword,
+        updatePassword,
+        isLoading,
+        isError,
+        message,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-const useAuth = () => {
+export const useAuth = () => {
   const context = useContext(AuthContext);
+
   if (!context) {
-    throw new Error("useAuth must be used within an AuthContextProvider");
+    throw new Error("useAuth must be used within an AuthProvider");
   }
+
   return context;
 };
 
-const AuthRoute = ({ element, ...rest }) => {
-  const { loggedIn } = useAuth();
+export const useAuthRedirect = () => {
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  if (loggedIn === null) return null;
-
-  if (loggedIn === false) {
-    navigate("/user/login");
-    return null;
-  }
-
-  return element;
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/?redirect=true&logedin=true");
+    }
+  }, [isAuthenticated, navigate]);
 };
 
-export { AuthContextProvider, useAuth, AuthRoute };
+export default useAuth;

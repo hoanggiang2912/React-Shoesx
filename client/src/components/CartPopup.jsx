@@ -66,7 +66,10 @@ function CartPopup() {
             </h3>
           </div>
           <div className="px-5 pb-5">
-            <Button className="w-full p-3 bg-primaryColor text-white">
+            <Button
+              href={cart.length > 0 ? "/cart/checkout" : null}
+              className="w-full p-3 bg-primaryColor text-white"
+            >
               Checkout
             </Button>
           </div>

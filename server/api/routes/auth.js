@@ -79,7 +79,7 @@ router.post("/register", async (req, res, next) => {
   if (existUser)
     return res.status(400).json({ message: "Email already exists" });
 
-  // Hass password
+  // Hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
@@ -140,17 +140,18 @@ router.post("/login", async (req, res) => {
   // Validate
   const { error } = loginValidator(req.body);
   if (error) return res.status(400).json({ message: error.details[0].message });
-  // check if the email exist
+
+  // Check if the email exists
   const user = await UsersModel.findOne({ email: req.body.email });
   if (!user)
     return res.status(400).json({ message: "Email or password is incorrect!" });
 
-  // check password
+  // Check password
   const validPass = await bcrypt.compare(req.body.password, user.password);
   if (!validPass)
     return res.status(400).json({ message: "Email or password is incorrect!" });
 
-  // create and assign a token
+  // Create and assign tokens
   const authToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
     expiresIn: 60 * 5,
   });
@@ -158,10 +159,20 @@ router.post("/login", async (req, res) => {
     expiresIn: 60 * 60 * 24 * 365,
   });
 
-  res.header("Authorization", authToken).send({
-    refreshToken,
-    authToken,
-    user,
+  // Exclude password from the user object
+  const userResponse = { ...user._doc };
+  delete userResponse.password;
+
+  // Set tokens in HTTP-only cookies
+  res.cookie("authToken", authToken, { httpOnly: true, sameSite: "strict" });
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    sameSite: "strict",
+  });
+
+  res.status(200).json({
+    message: "Login successful",
+    user: userResponse,
   });
 });
 

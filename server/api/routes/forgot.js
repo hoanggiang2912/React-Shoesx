@@ -27,14 +27,45 @@ router.post("/", async (req, res) => {
   const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
     expiresIn: "1h",
   });
+
+  const savedTokenUser = await UsersController.updateSecurityToken(
+    user._id,
+    token
+  );
+  if (!savedTokenUser)
+    return res.status(400).json({ errorMessage: "Update token failed" });
+
   const link = `/reset-password/${user._id}?token=${token}`;
-  // const updatedUser = await UsersController.updatePassword(user._id, password);
-  // console.log(user, password);
+
   const info = await sendMail(email, {
     link,
   });
 
   res.json({ sendMail: true, info });
+});
+
+router.post("/validate-reset-token/:idUser", async (req, res) => {
+  const { idUser } = req.params;
+  const { token } = req.body;
+
+  try {
+    // Replace 'users' with your actual users collection name
+    const user = await UsersModel.findOne({ _id: idUser });
+
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    const verify = jwt.verify(token, process.env.TOKEN_SECRET);
+    if (!verify) {
+      return res.status(400).send({ message: "Token is invalid" });
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error validating token:", error);
+    res.status(500).send({ message: `Internal server error: ${error}` });
+  }
 });
 
 // router.get("/reset-password/:idUser", async (req, res) => {

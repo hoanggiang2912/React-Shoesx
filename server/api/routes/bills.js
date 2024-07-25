@@ -59,30 +59,8 @@ router.post("/", async (req, res, next) => {
   });
 
   try {
-    // update product qty
-    // for (let i = 0; i < bill.products.length; i++) {
-    //   const product = bill.products[i];
-    //   const productId = product.idProduct;
-
-    //   const productData = await ProductsController.getById(productId);
-    //   console.log(productData);
-    //   console.log(productData.products);
-
-    //   if (productData.qty < product.qty) {
-    //     return res.json({ message: "Product out of stock" });
-    //   } else {
-    //     const qty = productData.qty - product.qty;
-    //     const updatedProduct = await ProductsController.updateQty(
-    //       productId,
-    //       qty
-    //     );
-
-    //     console.log(updatedProduct);
-    //   }
-    // }
-
     const savedBill = await bill.save();
-    res.json(savedBill);
+    res.json({ savedBill, success: true });
   } catch (error) {
     res.json({ message: error });
   }

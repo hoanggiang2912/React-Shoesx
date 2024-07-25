@@ -1,16 +1,20 @@
-import { motion } from "framer-motion";
-import { FaFacebook } from "react-icons/fa6";
+import { AnimatePresence, motion } from "framer-motion";
+import { FaC, FaFacebook } from "react-icons/fa6";
 import { FaGoogle } from "react-icons/fa6";
 import { AiOutlineLogin } from "react-icons/ai";
 import Overlay from "./Overlay";
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from "@clerk/clerk-react";
+import Input from "./Input";
+import { FormProvider, useForm } from "react-hook-form";
+import { emailValidation, passwordValidation } from "../utils/inputValidations";
+import FormMessage from "./FormMessage";
+import useAuth from "../contexts/AuthContext";
 
 function LoginForm({ isOpen, close, switcher }) {
+  const methods = useForm();
+  const { isLoading, login, message, isError } = useAuth();
+
+  const onSubmit = methods.handleSubmit((data) => login(data, close));
+
   return (
     <Overlay isOpen={isOpen} close={close}>
       <motion.div
@@ -28,63 +32,80 @@ function LoginForm({ isOpen, close, switcher }) {
             alt=""
             className={"absolute z-8 transform scale-125"}
           />
-          <form
-            action="#"
-            id="loginForm"
-            className="relative z-10 bg-white backdrop-blur-md bg-opacity-10 p-5 rounded-xl shadow-xl flex-1"
-          >
-            <h2 className="text-2xl font-bold text-white">Login</h2>
-            <p className="text-white mt-2">
-              Didn&apos;t have an account yet?{" "}
-              <span
-                onClick={switcher}
-                className="text-white underline hover:text-gray-300 transition cursor-pointer"
-              >
-                Create one
-              </span>
-            </p>
-            <div className="mt-4">
-              <input
-                type="email"
-                id="email"
-                placeholder="Email"
-                className="form-input"
-              />
-            </div>
-            <div className="mt-4">
-              <input
-                type="password"
-                placeholder="Password"
-                id="password"
-                className="form-input"
-              />
-            </div>
-            <div className="mt-4">
-              <div className="text-center text-gray-400">
-                Or Social Accounts
+          <FormProvider {...methods}>
+            <form
+              onSubmit={(e) => e.preventDefault()}
+              noValidate
+              action="#"
+              id="loginForm"
+              className="relative z-10 bg-white backdrop-blur-md bg-opacity-10 p-5 rounded-xl shadow-xl flex-1"
+            >
+              {message && (
+                <AnimatePresence mode="wait" initial={false}>
+                  {message && (
+                    <FormMessage message={message} isError={isError} />
+                  )}
+                </AnimatePresence>
+              )}
+              <h2 className="text-2xl font-bold text-white">Login</h2>
+              <p className="text-white mt-2">
+                Didn&apos;t have an account yet?{" "}
+                <span
+                  onClick={switcher}
+                  className="text-white underline hover:text-gray-300 transition cursor-pointer"
+                >
+                  Create one
+                </span>
+              </p>
+              <div className="mt-4">
+                <Input
+                  labelClassName={"text-lg font-semibold"}
+                  inputClassName={"form-input"}
+                  {...emailValidation}
+                />
               </div>
-              <button className="bg-transparent border border-solid text-white mt-4 w-full py-2 rounded-full hover:bg-white transition hover:border-transparent hover:backdrop-blur-md hover:bg-opacity-20 flex items-center justify-center gap-2">
-                <FaFacebook></FaFacebook> Facebook
-              </button>
-              <button
-                className="bg-transparent border border-solid text-white mt-4 w-full py-2 rounded-full hover:bg-white transition hover:border-transparent hover:backdrop-blur-md hover:bg-opacity-20 flex items-center justify-center gap-2"
-                onClick={(e) => e.preventDefault()}
-              >
-                <FaGoogle></FaGoogle>
-                <SignedOut>
-                  <SignInButton />
-                </SignedOut>
-                <SignedIn>
-                  <UserButton />
-                </SignedIn>
-              </button>
-            </div>
-            <div className="mt-4">
-              <button className="bg-black text-white w-full py-2 rounded-full gap-2 flex items-center justify-center hover:backdrop-blur-xl hover:bg-opacity-80 transition">
-                <AiOutlineLogin></AiOutlineLogin> Login
-              </button>
-            </div>
-          </form>
+              <div className="mt-4">
+                <Input
+                  labelClassName={"text-lg font-semibold"}
+                  inputClassName={"form-input"}
+                  togglePassword={true}
+                  {...passwordValidation}
+                />
+              </div>
+              <div className="mt-4">
+                <div className="text-center text-gray-400">
+                  Or Social Accounts
+                </div>
+                <button className="bg-transparent border border-solid text-white mt-4 w-full py-2 rounded-full hover:bg-white transition hover:border-transparent hover:backdrop-blur-md hover:bg-opacity-20 flex items-center justify-center gap-2">
+                  <FaFacebook></FaFacebook> Facebook
+                </button>
+                <button
+                  className="bg-transparent border border-solid text-white mt-4 w-full py-2 rounded-full hover:bg-white transition hover:border-transparent hover:backdrop-blur-md hover:bg-opacity-20 flex items-center justify-center gap-2"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  <FaGoogle></FaGoogle> Google
+                </button>
+              </div>
+              <div className="mt-4">
+                <button
+                  className="bg-black text-white w-full py-2 rounded-full gap-2 flex items-center justify-center hover:backdrop-blur-xl hover:bg-opacity-80 transition"
+                  onClick={onSubmit}
+                >
+                  {!isLoading ? (
+                    <>
+                      <AiOutlineLogin></AiOutlineLogin>
+                      <p>Login</p>
+                    </>
+                  ) : (
+                    <>
+                      <FaC></FaC>
+                      <p>Waiting for login</p>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </FormProvider>
         </div>
         <div className="relative w-1/2">
           <img

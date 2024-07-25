@@ -1,8 +1,11 @@
 import { NavLink } from "react-router-dom";
 import styles from "./UserSideBar.module.css";
 import { useMemo } from "react";
+import useAuth from "../contexts/AuthContext";
 
 function UserSideBar() {
+  const { logout } = useAuth();
+
   const sidebarOptions = useMemo(
     () => [
       {
@@ -15,12 +18,11 @@ function UserSideBar() {
       },
       {
         name: "Forgot Password",
-        to: "/user/forgot-password", // Fixed the duplicate '/user/orders' path
+        to: "/user/forgot-password",
       },
       {
         name: "Logout",
-        onClick: () => console.log("Logout"),
-        // Assuming you handle the logout differently since it doesn't navigate
+        onClick: () => logout(),
       },
     ],
     []

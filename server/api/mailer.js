@@ -1,6 +1,6 @@
 const nodeMailer = require("nodemailer");
 
-const sendMail = async (email, option = {}) => {
+const sendMail = async (email, option) => {
   const html = `
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -246,7 +246,7 @@ table, td { color: #000000; } </style>
 
   <div>
     <h2 style="text-align: center; padding: 12px; background: #d9d9d9">
-      <a href="http://localhost:4200/user${option?.link}">Click here!</a>
+      <a href="http://localhost:5173/user${option.link}">Click here!</a>
     </h2>
   </div>
 

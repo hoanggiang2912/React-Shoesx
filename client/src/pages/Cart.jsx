@@ -7,12 +7,12 @@ import CartProduct from "../components/CartProduct";
 import { formatCurrency } from "../utils/util";
 
 function Cart() {
-  const { cart, cartTotal } = useCart();
+  const { cart, cartTotal, cartQty } = useCart();
 
   return (
     <ClientLayout>
       <Section>
-        <h1 className="text-5xl font-bold">Cart (5)</h1>
+        <h1 className="text-5xl font-bold">Cart ({cartQty})</h1>
         <Row gutter={32}>
           <Col span={16}>
             <div className="cart-products-wrapper mt-12">

@@ -44,6 +44,47 @@ const reducer = (state, action) => {
         ...state,
         cart: state.cart.filter((item) => item._id !== action.payload),
       };
+    case "increaseQty":
+      return {
+        ...state,
+        cart: state.cart.map((item) =>
+          item._id === action.payload ? { ...item, qty: item.qty + 1 } : item
+        ),
+      };
+    case "decreaseQty": {
+      // First, filter out the item if its quantity is 1
+      const filteredCart = state.cart.filter(
+        (item) => !(item._id === action.payload && item.qty === 1)
+      );
+
+      // Then, map over the filtered cart to decrease the quantity of the item if needed
+      const updatedCart = filteredCart.map((item) => {
+        if (item._id === action.payload && item.qty > 1) {
+          return { ...item, qty: item.qty - 1 };
+        } else {
+          return item;
+        }
+      });
+
+      return {
+        ...state,
+        cart: updatedCart,
+      };
+    }
+    case "updateQty":
+      return {
+        ...state,
+        cart: state.cart.map((item) =>
+          item._id === action.payload._id
+            ? { ...item, qty: action.payload.qty }
+            : item
+        ),
+      };
+    case "clearCart":
+      return {
+        ...state,
+        cart: [],
+      };
 
     default:
       throw new Error("Action type is unknow!");
